@@ -477,7 +477,9 @@ class VecpicGUI:
         overrides: dict[str, object] = {}
         for name, widget in self.param_widgets.items():
             if isinstance(widget, _ttk.Combobox):
-                overrides[name] = widget.get()
+                value = widget.get()
+                if value:
+                    overrides[name] = value
             elif isinstance(widget, _ttk.Spinbox):
                 try:
                     overrides[name] = int(widget.get())

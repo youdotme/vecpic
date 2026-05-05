@@ -60,7 +60,7 @@ class VtracerConfig:
             names = ", ".join(sorted(unknown))
             raise ConfigError(f"unknown config keys: {names}")
 
-        values = {k: v for k, v in overrides.items() if v is not None}
+        values = {k: v for k, v in overrides.items() if v is not None and v != ""}
         return replace(self, **values)
 
     def to_dict(self) -> dict[str, object]:
