@@ -156,6 +156,8 @@ def read_image(
 
     img = _normalize_mode(img)
 
+    img = _convert_to_srgb(img)
+
     if img.mode == "RGBA":
         logger.debug("alpha channel detected, preserving alpha")
         if flatten_bg is not None:
@@ -217,6 +219,34 @@ def _flatten_alpha(img: Image.Image, bg_colour: str) -> Image.Image:
     flattened = Image.alpha_composite(bg, img)
     img.close()
     return flattened
+
+
+def _convert_to_srgb(img: Image.Image) -> Image.Image:
+    """Convert image to sRGB colour space if it has an embedded ICC profile.
+
+    Without this step, images with non-sRGB profiles (Display P3, Adobe RGB)
+    produce shifted colours: Pillow reads raw pixel values without applying
+    the profile, but downstream consumers (SVG, web) assume sRGB.
+    """
+    icc = img.info.get("icc_profile")
+    if not icc:
+        return img
+
+    try:
+        from PIL import ImageCms
+
+        srgb = ImageCms.createProfile("sRGB")
+        output_mode = img.mode if img.mode in ("RGB", "RGBA") else "RGBA"
+        converted = ImageCms.profileToProfile(
+            img, icc, srgb, outputMode=output_mode
+        )
+        converted.info.pop("icc_profile", None)
+        img.close()
+        logger.info("converted ICC profile -> sRGB")
+        return converted
+    except Exception as exc:
+        logger.debug("ICC profile conversion skipped: %s", exc)
+        return img
 
 
 def _check_size(img: Image.Image, max_size: int | None) -> None:

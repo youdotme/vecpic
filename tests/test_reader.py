@@ -157,3 +157,39 @@ class TestReadImageModeConversion:
         converted.save(path, format="PNG")
         result = read_image(path)
         result.close()
+
+
+class TestIccProfile:
+    def test_no_profile_passes_through(self, temp_png):
+        img = read_image(temp_png)
+        assert img.mode == "RGB"
+        img.close()
+
+    def test_icc_profile_converted(self, temp_png, monkeypatch):
+        mock_called = []
+
+        class FakeProfile:
+            pass
+
+        def fake_profile_to_profile(img, input_profile, output_profile, outputMode):
+            mock_called.append(True)
+            result = img.copy()
+            result.info = dict(img.info)
+            return result
+
+        def fake_create_profile(name):
+            return FakeProfile()
+
+        monkeypatch.setattr("PIL.ImageCms.profileToProfile", fake_profile_to_profile)
+        monkeypatch.setattr("PIL.ImageCms.createProfile", fake_create_profile)
+
+        from PIL import Image
+        img = Image.open(temp_png)
+        img.info["icc_profile"] = b"fake_icc_data"
+        path = temp_png + "_icc.png"
+        img.save(path)
+
+        result = read_image(path)
+        assert "icc_profile" not in result.info
+        assert len(mock_called) == 1
+        result.close()
