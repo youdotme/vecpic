@@ -233,12 +233,14 @@ def _convert_to_srgb(img: Image.Image) -> Image.Image:
         return img
 
     try:
+        import io as _io
+
         from PIL import ImageCms
 
         srgb = ImageCms.createProfile("sRGB")
         output_mode = img.mode if img.mode in ("RGB", "RGBA") else "RGBA"
         converted = ImageCms.profileToProfile(
-            img, icc, srgb, outputMode=output_mode
+            img, _io.BytesIO(icc), srgb, outputMode=output_mode
         )
         converted.info.pop("icc_profile", None)
         img.close()
