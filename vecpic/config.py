@@ -88,7 +88,7 @@ QUALITY_LEVELS: dict[str, dict[str, object]] = {
     "low": {
         "max_size": 1024,
         "filter_speckle": 8,
-        "color_precision": 6,
+        "color_precision": 8,
         "layer_difference": 12,
         "corner_threshold": 45,
         "length_threshold": 4.0,
@@ -99,7 +99,7 @@ QUALITY_LEVELS: dict[str, dict[str, object]] = {
     "medium": {
         "max_size": 2048,
         "filter_speckle": 3,
-        "color_precision": 7,
+        "color_precision": 8,
         "layer_difference": 7,
         "corner_threshold": 20,
         "length_threshold": 3.5,

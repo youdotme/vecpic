@@ -125,7 +125,7 @@ class TestQualityLevels:
         assert q["corner_threshold"] == 45
         assert q["splice_threshold"] == 40
         assert q["path_precision"] == 3
-        assert q["max_iterations"] == 8
+        assert q["color_precision"] == 8
 
     def test_quality_medium(self):
         q = QUALITY_LEVELS["medium"]
@@ -133,7 +133,7 @@ class TestQualityLevels:
         assert q["corner_threshold"] == 20
         assert q["splice_threshold"] == 22
         assert q["path_precision"] == 4
-        assert q["max_iterations"] == 13
+        assert q["color_precision"] == 8
 
     def test_quality_high(self):
         q = QUALITY_LEVELS["high"]
@@ -141,7 +141,7 @@ class TestQualityLevels:
         assert q["corner_threshold"] == 10
         assert q["splice_threshold"] == 14
         assert q["path_precision"] == 5
-        assert q["max_iterations"] == 17
+        assert q["color_precision"] == 8
 
     def test_quality_extreme(self):
         q = QUALITY_LEVELS["extreme"]
@@ -149,7 +149,7 @@ class TestQualityLevels:
         assert q["corner_threshold"] == 6
         assert q["splice_threshold"] == 10
         assert q["path_precision"] == 6
-        assert q["max_iterations"] == 22
+        assert q["color_precision"] == 8
 
     def test_quality_extreme_not_absurd(self):
         q = QUALITY_LEVELS["extreme"]
