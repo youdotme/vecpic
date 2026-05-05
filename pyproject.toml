@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vecpic"
+version = "0.1.0"
+description = "Convert raster images to SVG vector graphics using vtracer."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "vecpic maintainers" }]
+keywords = ["svg", "vector", "raster", "image", "vtracer", "pillow"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+]
+dependencies = [
+    "Pillow>=10.0",
+    "vtracer>=0.6.11",
+]
+
+[project.optional-dependencies]
+export = ["cairosvg>=2.7"]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+
+[project.scripts]
+vecpic = "vecpic.cli:main"
+vecpic-gui = "vecpic.gui:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = []
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["vtracer.*", "cairosvg.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: tests that call real vtracer or external rendering backends",
+]
+addopts = "-ra --strict-markers"
