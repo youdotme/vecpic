@@ -119,6 +119,7 @@ class VecpicGUI:
         out_frame = ttk.Labelframe(parent, text="Output Format", padding=5)
         out_frame.grid(row=2, column=0, sticky="ew")
         self.format_var = tk.StringVar(value="svg")
+        self.format_var.trace_add("write", self._on_format_changed)
         for i, fmt in enumerate(sorted(SUPPORTED_OUTPUT_FORMATS)):
             ttk.Radiobutton(
                 out_frame, text=fmt.upper(), variable=self.format_var, value=fmt
@@ -321,6 +322,12 @@ class VecpicGUI:
 
     # ---- presets ----
 
+    def _on_format_changed(self, *_args) -> None:
+        current = self.output_var.get()
+        if current and self.input_path:
+            p = Path(self.input_path)
+            self.output_var.set(str(p.with_suffix(f".{self.format_var.get()}")))
+
     def _on_preset_changed(self) -> None:
         key = self.preset_var.get()
         if key in PRESETS:
@@ -411,8 +418,7 @@ class VecpicGUI:
             self.info_size_var.set(f"Size: {img.width} x {img.height} px")
             self.info_mode_var.set(f"Mode: {img.mode}")
             self._show_preview(img)
-            if not self.output_var.get():
-                self.output_var.set(str(path.with_suffix(f".{self.format_var.get()}")))
+            self.output_var.set(str(path.with_suffix(f".{self.format_var.get()}")))
         except Exception as exc:
             self.info_format_var.set(f"Error: {exc}")
             self.info_size_var.set("")
